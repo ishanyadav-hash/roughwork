@@ -4,19 +4,31 @@ import axios from "axios";
 function App() {
   const [city, setCity] = useState("")
   const [weather,setWeather] = useState(null)
+  const [error,setError] = useState("")
+  const [loading,setLoading] = useState(false);
   async function searchWeather() {
   try {
+    setError("");
+    setLoading(true);
     const response = await axios.get(
       `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=28a5fe47cfe64b3fe33cd19d86993468&units=metric`
     );
+    // setLoading(false);
 
-    console.log(response.data);
     setWeather(response.data);
 
   }catch (error) {
-  console.log(error.response.data);
+    setWeather(null);
+    setError("City not Found");
+  }
+  finally {
+    setLoading(false);
+  }
 }
-
+function handleEnter(e){
+  if (e.key==="Enter") {
+    searchWeather();
+  }
 }
   return (
     <>
@@ -34,16 +46,19 @@ function App() {
             className="flex-1 border rounded-lg px-4 py-2"
             value={city}
             onChange={(e)=>{setCity(e.target.value)}}
+            onKeyDown={(e)=>handleEnter(e)}
           />
 
           <button
+            disabled={loading}
             className="bg-blue-500 text-white px-4 rounded-lg hover:bg-blue-600"
             onClick={searchWeather}
           >
             Search
           </button>
+          {loading &&(<p className='text-blue-400 font-bold text-center'>Loading...</p>)}
         </div>
-        {weather && (
+        {weather &&(
           <div className='mt-6 border rounded-xl p-4 bg-blue-50'>
             <h2 className='text-2xl font-bold text-center mb-4'>📍 {weather.name}</h2>
             <p className='py-2'>🌡️ Temperature: {weather.main.temp} C</p>
@@ -52,6 +67,9 @@ function App() {
             <p className='py-2'>💨 Wind Speed: {weather.wind.speed}m/s</p>
             <p className='py-2'>☁ Description: {weather.weather[0].description}</p>
           </div>
+        )}
+        {error &&(
+          <h2 className='text-center text-red-500 font-bold mb-4'>{error}</h2>
         )}
       </div>
     </div>
