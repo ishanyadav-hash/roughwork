@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import axios from "axios";
-
+require("dotenv").config();
+const apiKey = process.env.API_KEY;
 function App() {
   const [city, setCity] = useState("")
   const [weather,setWeather] = useState(null)
@@ -11,7 +12,7 @@ function App() {
     setError("");
     setLoading(true);
     const response = await axios.get(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=28a5fe47cfe64b3fe33cd19d86993468&units=metric`
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=apiKey&units=metric`
     );
     // setLoading(false);
 
